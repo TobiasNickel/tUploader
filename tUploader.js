@@ -9,6 +9,12 @@
 
 
 (function(document){
+// loading tStabilizer from https://github.com/TobiasNickel/tStabilizer
+tStabilizer=function(c){c=c||Infinity;this.values=[];this.push=function(a){for(this.values.push(a);this.values.length>c;)this.values.shift()};this.getAvarage=function(){return this.getSum()/this.values.length};this.getMax=function(){for(var a=-Infinity,b=this.values.length;b--;)a=a<this.values[b]?this.values[b]:a;return a};this.getMin=function(){for(var a=Infinity,b=this.values.length;b--;)a=a>this.values[b]?this.values[b]:a;return a};this.getSum=function(){for(var a=0,b=this.values.length;b--;)a+=this.values[b];return a}};
+// tmitter.min.js from https://github.com/TobiasNickel/tMitter
+function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this._events||(this._events[a]=[]);-1===this._events[a].indexOf(c)&&this._events[a].push(c)};b.off=function(a,c){a?c?delete this._events[a][this._events[a].indexOf(c)]:delete this._events[a]:this._events={}};b.trigger=function(a,c){if(a&&this._events[a])for(var b=this._events[a].length;b--;)this._events[a][b](c)}};
+	
+
 	var body=null;
 	// the input that is used for the filebrowser
 	var input = document.createElement('input');
@@ -55,12 +61,35 @@
 
 	// the entry point for catching all files, no matter if from drag and drop or selecting it via filebrowser
 	function drop(e) {
+		autoDroparea.style.display='none';
+		// copy the fileObject to a manageable Array, from a FileList
+		e.files=[];
+		var i = e.dataTransfer.files.length;
+		while(i--){
+			e.files.push(e.dataTransfer.files[i]);
+		}
+		// remove files, that don't match the filetype
+		if(tUploader.acceptedFileExtensions){
+			var i = e.files.length
+			while(i--){
+				var extension=e.files[i].name.slice(e.files[i].name.lastIndexOf('.'));
+				if(	tUploader.acceptedFileExtensions.indexOf(extension)==-1)
+					e.files.splice(i,1);
+			}
+		}
 		tUploader.preprocess(e, function(options){
 			if(!options)options={};
-			autoDroparea.style.display='none';
+			// stop if there is no file to upload left
+			if(!e.files.length)return;
+			
 			options.path=options.path || tUploader.stdUploadPath;
+			
 			e.stopPropagation();
 			e.preventDefault();
+			
+			
+			e.bitrate=new tStabilizer(5);
+			tUploader.uploads.push(e);
 			
 			// prepare the files for upload
 			var dt = e.dataTransfer;
@@ -68,7 +97,6 @@
 			var formData = new FormData();
 			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
-
 				// Add the file to the request.
 				formData.append('files[]', file, file.name);
 			}
@@ -94,33 +122,35 @@
 			// Set up a handler for when the request finishes.
 			xhr.onload = function () {
 				if (xhr.status === 200) {
-					tUploader.trigger('progress',{files:files,event: e, progress:1, bitrate:0});
-					tUploader.trigger('success',{files:files});
+					tUploader.uploads.splice(tUploader.uploads.indexOf(e),1);
+					tUploader.trigger('progress',{event: e, progress:1, bitrate:0});
+					tUploader.trigger('success',{event:e});
 				} else {
-					tUploader.trigger('error',{files:files});
+					tUploader.trigger('error',{event:e});
 				}
 			};
-			
+			tUploader.trigger('start', {event:e})
 			var lastLoaded=0;
 			var lastTimeStamp=0;
-			xhr.upload.addEventListener('progress',function(e){ 
-				var progress = e.loaded/e.total;
-				var deltaLoaded = e.loaded - lastLoaded;
-				var deltaTime = e.timeStamp - lastTimeStamp;
+			xhr.upload.addEventListener('progress',function(ep){ 
+				var progress = ep.loaded/ep.total;
+				var deltaLoaded = ep.loaded - lastLoaded;
+				var deltaTime = ep.timeStamp - lastTimeStamp;
 				var bitrate = parseInt(deltaLoaded / deltaTime);
-				tUploader.trigger('progress',{files:files,event: e, progress:progress, bitrate:bitrate});
+				e.bitrate.push(bitrate);
+				e.total=ep.total;
+				e.loaded=ep.loaded;
+				e.progress=progress;
+				tUploader.trigger('progress',{event: ep, progress:progress, bitrate:e.bitrate.getAvarage(),globalProgress:tUploader.getGlobalProgress()});
 				//todo: calculate the bitrate from the last view progress events, so this is more table
-				lastLoaded = e.loaded;
-				lastTimeStamp = e.timeStamp;
+				lastLoaded = ep.loaded;
+				lastTimeStamp = ep.timeStamp;
 			});
 			// Send the Data.
 			xhr.send(formData);
 			tUploader.trigger('begin',{files:files});
 		})
 	}
-	// tmitter.min.js from https://github.com/TobiasNickel/tMitter
-	function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this._events||(this._events[a]=[]);-1===this._events[a].indexOf(c)&&this._events[a].push(c)};b.off=function(a,c){a?c?delete this._events[a][this._events[a].indexOf(c)]:delete this._events[a]:this._events={}};b.trigger=function(a,c){if(a&&this._events[a])for(var b=this._events[a].length;b--;)this._events[a][b](c)}};
-	
 	window.tUploader={
 		openFilebrowser:function(){
 			input.click();
@@ -134,7 +164,42 @@
 			if(true)callback({});
 		},
 		stdUploadPath:'upload.json',
-		
+		getGlobalProgress:function(){
+			var progressSum=0;
+			var sizeSum=0;
+			for(var i = 0;i<this.uploads.length;i++){
+				progressSum+=this.uploads[i].progress * this.uploads[i].total;
+				sizeSum += this.uploads[i].total;
+			}
+			if(progressSum==0 &&sizeSum == 0 ){
+				return 1;
+			}else{
+				return progressSum/sizeSum;
+			}
+		},
+		/**
+		 * set the acceptValue
+		 *@param value {string} use a value as described here:
+		 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input?redirectlocale=en-US&redirectslug=HTML%2FElement%2FInput
+		 * if
+		 */
+		setAccept:function(value){
+			input.setAttribute('accept',value);
+			if(value){
+				switch(value){
+					case 'imgage/*':this.acceptedFileExtensions='.jpg,.jpeg,.png,.gif,.tif,.bmp';break;
+					case 'audio/*':this.acceptedFileExtensions='.mp3,.mp4,.odd,.wav';break;
+					default:this.acceptedFileExtensions=value;
+				}
+			}else{
+				this.acceptedFileExtensions=null;
+			}
+		},
+		acceptedFileExtensions:null,
+		// the input used to open the filebrowser
+		input:input,
+		// contains information about all current uploads
+		uploads:[],
 		// the style for the dropzone, change it, to fit to your design, 
 		// now it is yellow with a brown border.
 		// but this dropzone should keep filling the whole width. 
