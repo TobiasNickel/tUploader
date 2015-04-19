@@ -27,3 +27,6 @@ This module creates a singleton object tUploader.
 		// set this to false, if you want to handle the dropzones by yourself, 
 		// this  nessasary if you need more then one dropzone on your app.
 		autoDroparea:true
+
+		
+this lib, works good in combination with tomcat, ruby, PHP, Phython, NodeJS and more
