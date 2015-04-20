@@ -8,7 +8,7 @@
  */
 
 
-(function(document){
+tUploader =(function(document){
 // loading tStabilizer from https://github.com/TobiasNickel/tStabilizer
 tStabilizer=function(c){c=c||Infinity;this.values=[];this.push=function(a){for(this.values.push(a);this.values.length>c;)this.values.shift()};this.getAvarage=function(){return this.getSum()/this.values.length};this.getMax=function(){for(var a=-Infinity,b=this.values.length;b--;)a=a<this.values[b]?this.values[b]:a;return a};this.getMin=function(){for(var a=Infinity,b=this.values.length;b--;)a=a>this.values[b]?this.values[b]:a;return a};this.getSum=function(){for(var a=0,b=this.values.length;b--;)a+=this.values[b];return a}};
 // tmitter.min.js from https://github.com/TobiasNickel/tMitter
@@ -92,8 +92,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			tUploader.uploads.push(e);
 			
 			// prepare the files for upload
-			var dt = e.dataTransfer;
-			var files = dt.files;
+			var files = e.files;
 			var formData = new FormData();
 			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
@@ -151,7 +150,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			tUploader.trigger('begin',{files:files});
 		})
 	}
-	window.tUploader={
+	var tUploader={
 		openFilebrowser:function(){
 			input.click();
 		},
@@ -209,6 +208,6 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 		autoDropareaElement:autoDroparea,
 		autoDroparea:true
 	}
-	tMitter(window.tUploader);
-	
+	tMitter(tUploader);
+	return tUploader;
 })(document);
