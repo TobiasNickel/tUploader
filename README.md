@@ -31,7 +31,7 @@ This module creates a singleton object tUploader.
 ##events
     this lib uses the tMitter eventsystem, witch is almost similar to use like Backbone.event or emitter.js. It has the Methods .on - to register a listener, .off - to remove a listener, internally .trigger is used to provide the events for your app.
     
-    'start': the preProzessing is finished and the lib starts to upload
+    'begin': the preProzessing is finished and the lib starts to upload
     'progress': the progress information for a file, it also provides information for multiple uploads
     'success':triggered when an upload has finished successfully
     'error':triggered when an upload was stopped, i.e.: connection lost/refused
