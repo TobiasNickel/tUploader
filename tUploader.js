@@ -97,7 +97,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
 				// Add the file to the request.
-				formData.append('files[]', file, file.name);
+				formData.append(tUploader.varName+'[]', file, file.name);
 			}
 			var getParams='';
 			if(options.get){
@@ -199,6 +199,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 		input:input,
 		// contains information about all current uploads
 		uploads:[],
+		varName:'files',
 		// the style for the dropzone, change it, to fit to your design, 
 		// now it is yellow with a brown border.
 		// but this dropzone should keep filling the whole width. 

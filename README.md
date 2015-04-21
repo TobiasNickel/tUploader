@@ -27,7 +27,9 @@ This module creates a singleton object tUploader.
 		// set this to false, if you want to handle the dropzones by yourself, 
 		// this  nessasary if you need more then one dropzone on your app.
 		autoDroparea:true
-
+        // the varName in the PostData
+        varName: 'files'
+        
 ##events
     this lib uses the tMitter eventsystem, witch is almost similar to use like Backbone.event or emitter.js. It has the Methods .on - to register a listener, .off - to remove a listener, internally .trigger is used to provide the events for your app.
     
@@ -36,8 +38,14 @@ This module creates a singleton object tUploader.
     'success':triggered when an upload has finished successfully
     'error':triggered when an upload was stopped, i.e.: connection lost/refused
     
-    
-    
+##example
+check out the upload.php, that contains a complete WebApp, static files with your friends or your devices in a local network.
+        
+you can run it by the php commandline-tool, using:
+    php -S 0.0.0.0:8080 upload.php
+(you have to me in the rootfolder of this repository)
+and then visit "http://localhost:8080/" in your borwser.
         
         
-this lib, works good in combination with tomcat, ruby, PHP, Phython, NodeJS and more
+##note
+This lib, works good in combination with tomcat, ruby, PHP, Phython, NodeJS and more
