@@ -49,3 +49,7 @@ and then visit "http://localhost:8080/" in your borwser.
         
 ##note
 This lib, works good in combination with tomcat, ruby, PHP, Phython, NodeJS and more
+
+##Developer
+Tobias Nickel  
+![alt text](https://avatars1.githubusercontent.com/u/4189801?s=150) 
