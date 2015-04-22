@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>tUploader</title>
+<style type="text/css">
+  body{height:3000px;}
+ </style>
+<script src="tUploader.min.js"></script><script>
+window.onload=function(){
+	
+	var log=document.getElementById('log');
+	// configure the uploader
+	tUploader.stdUploadPath="upload.json"
+	tUploader.varName='files';
+	tUploader.autoDroparea = true;
+	tUploader.preprocess = function(e,callback){
+		callback();
+	};
+	
+	tUploader.on("begin",function(params){console.log('begin',params);
+		log.innerHTML += '<br>START UPLOAD';
+	});
+	tUploader.on("success",function(params){console.log('success',params);
+	
+		log.innerHTML += '<br>Uploaded';
+		for (var i = 0; i < params.event.files.length; i++) {
+		  var file = params.event.files[i];
+		  log.innerHTML += '<br><a target="_blank" href="/uploads/'+file.name+'">'+file.name+' </a>';
+		}
+	});
+	tUploader.on("error",function(params){console.log('error',params);
+		log.innerHTML += '<br>UPLOAD ERROR';
+	});
+	tUploader.on("progress",function(params){console.log('progress',params);
+		document.getElementById("speed").innerHTML=params.bitrate?(params.bitrate)+'kb/s':"";
+		//log.innerHTML += '<br>progress:'+params.event.files[0].name +' :: '+params.progress+' :: '+ (params.bitrate)+'kb/s';
+		bar.style.width = parseInt(params.globalProgress*100) + '%';
+	});
+	
+	// fileList that have been uploaded before
+	(function(){
+		var xhr = new XMLHttpRequest()
+		xhr.open('GET', 'uploads.json', true);
+		xhr.onload = function(e){
+			var files = JSON.parse(xhr.response);
+			console.log(files);
+			log.innerHTML +='<h2>uploads</h2><div>';
+			for (var i = 0; i < files.length; i++) {
+				log.innerHTML += '<br /><a target="_blank" href="uploads/'+files[i]+'">'+files[i]+' </a> - <a href="delete.json?name='+files[i]+'">x</a>';
+			}
+			log.innerHTML += "</div><h2>your uploadLog</h2>";
+			
+		}
+		xhr.send();
+	})();
+}
+</script></head>
+
+
+<body>
+upload files using drag and drop<br>and download them at /uploads/[filename]
+<button onclick="tUploader.openFilebrowser()">open</button>
+<div id="bar" style="transition:width 2s linear;height:10px;width:0%;background-color:blue;"></div>
+<div id="speed"></div>
+<div id="log"></div>
+
+
+
+
+
+<div style="position:fixed;top:0px;bottom:0px;right:0px;left:0px;z-index:100;background-color:rgba(255,255,50,0.6);border:brown dashed 3px;display:none;margin:0px;"></div></body></html>

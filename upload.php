@@ -68,7 +68,13 @@ switch($uri[0]){
 	break;
 	case '/':
 	case '/upload.html':
-	default:
 		echo file_get_contents ( './upload.html');
 		break;
+	default:
+		if(file_exists(".".$uri[0])){
+			echo file_get_contents ( ".".$uri[0] );
+		}else{
+			echo "file".".".$uri[0]." not found";
+		}
+	;
 }
