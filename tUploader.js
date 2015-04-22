@@ -69,7 +69,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 		if(tUploader.acceptedFileExtensions){
 			var i = e.files.length
 			while(i--){
-				var extension = e.files[i].name.slice(e.files[i].name.lastIndexOf('.'));
+				var extension = e.files[i].name.slice(e.files[i].name.lastIndexOf('.')).toLowerCase();
 				if(	tUploader.acceptedFileExtensions.indexOf(extension)==-1)
 					e.files.splice(i,1);
 			}
