@@ -27,7 +27,7 @@ window.onload=function(){
 		}
 	});
 	tUploader.on("error",function(params){console.log('error',params);
-		log.innerHTML += '<br>UPLOAD ERROR';
+		log.innerHTML += '<br>UPLOAD ERROR on uploading:';
 	});
 	tUploader.on("progress",function(params){console.log('progress',params);
 		document.getElementById("speed").innerHTML=params.bitrate?(params.bitrate)+'kb/s':"";

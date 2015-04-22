@@ -114,15 +114,18 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST', options.path + (getParams.length ? getParams : ''), true);
 			// Set up a handler for when the request finishes.
-			xhr.onload = function () {
+			xhr.onload = function (ep) {
 				if (xhr.status === 200) {
 					tUploader.uploads.splice(tUploader.uploads.indexOf(e), 1);
 					tUploader.trigger('progress',{event: e, progress: 1, bitrate: 0});
-					tUploader.trigger('success',{event: e});
+					tUploader.trigger('success',{event: e, response:xhr.response});
 				} else {
-					tUploader.trigger('error',{event: e});
+					tUploader.trigger('error',{event: e, response:xhr.response});
 				}
 			};
+			xhr.onerror = function(ep){
+					tUploader.trigger('error',{event: e,errorEvent:ep, response:xhr.response});
+			}
 			var lastLoaded = 0;
 			var lastTimeStamp = 0;
 			xhr.upload.addEventListener('progress', function(ep){ 

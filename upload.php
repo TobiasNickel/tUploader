@@ -49,12 +49,17 @@ switch($uri[0]){
 		// $_FILES is from PHP
 		// ['files'] is from the tUploader's .varName Property
 		// and this code is from http://php.net/manual/en/function.move-uploaded-file.php
-		foreach ($_FILES["files"]["error"] as $key => $error) {
-			if ($error == UPLOAD_ERR_OK) {
-				$tmp_name = $_FILES["files"]["tmp_name"][$key];
-				$name = $_FILES["files"]["name"][$key];
-				forceFilePutContents("./uploads/$name",file_get_contents($tmp_name));
+		//print_r($_FILES);
+		if(isset($_FILES["files"])){
+			foreach ($_FILES["files"]["error"] as $key => $error) {
+				if ($error == UPLOAD_ERR_OK) {
+					$tmp_name = $_FILES["files"]["tmp_name"][$key];
+					$name = $_FILES["files"]["name"][$key];
+					forceFilePutContents("./uploads/$name",file_get_contents($tmp_name));
+				}
 			}
+		}else{
+			echo "no file has been send, maybe the file was to big?";
 		}
 		echo 'true';
 	break;
@@ -71,6 +76,33 @@ switch($uri[0]){
 		echo file_get_contents ( './upload.html');
 		break;
 	default:
+		$extension= explode('.',$uri[0]);
+		$extension = strtolower($extension[count($extension)-1]);
+		//echo "$extension";
+		switch($extension){
+			case 'htm':
+			case 'html':
+				header("Content-Type: text/html");
+			break;
+			case 'css':
+				header("Content-Type: text/css");
+			break;
+			case 'gif': 
+				header("Content-Type: image/gif");
+				break;
+			case 'png': 
+				header("Content-Type: image/png");
+				break;
+			case 'jpg':
+			case 'jpeg':
+				header("Content-Type: image/jpg");
+				break;
+			case 'js':
+				header("Content-Type: application/javascript");
+			break;
+			default:
+			header("Content-Type: application/force-download");
+		}
 		if(file_exists(".".$uri[0])){
 			echo file_get_contents ( ".".$uri[0] );
 		}else{
