@@ -188,7 +188,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			input.setAttribute('accept', value);
 			if(value){
 				switch(value){
-					case 'imgage/*': this.acceptedFileExtensions = '.jpg,.jpeg,.png,.gif,.tif,.bmp'; break;
+					case 'image/*': this.acceptedFileExtensions = '.jpg,.jpeg,.png,.gif,.tif,.bmp'; break;
 					case 'audio/*': this.acceptedFileExtensions = '.mp3,.mp4,.odd,.wav'; break;
 					default: this.acceptedFileExtensions = value;
 				}

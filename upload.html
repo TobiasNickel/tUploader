@@ -22,14 +22,14 @@ window.onload=function(){
 	
 		log.innerHTML += '<br>Uploaded';
 		for (var i = 0; i < params.event.files.length; i++) {
-		  var file = params.event.files[i];
-		  log.innerHTML += '<br><a target="_blank" href="/uploads/'+file.name+'">'+file.name+' </a>';
+			var file = params.event.files[i];
+			log.innerHTML += '<br><a target="_blank" href="/uploads/'+file.name+'">'+file.name+' </a>';
 		}
 	});
 	tUploader.on("error",function(params){console.log('error',params);
 		log.innerHTML += '<br>UPLOAD ERROR on uploading:';
 	});
-	tUploader.on("progress",function(params){console.log('progress',params);
+	tUploader.on("progress",function(params){
 		document.getElementById("speed").innerHTML=params.bitrate?(params.bitrate)+'kb/s':"";
 		//log.innerHTML += '<br>progress:'+params.event.files[0].name +' :: '+params.progress+' :: '+ (params.bitrate)+'kb/s';
 		bar.style.width = parseInt(params.globalProgress*100) + '%';

@@ -32,6 +32,41 @@ function forceFilePutContents ($filepath, $message){
     }
 }
 
+//method from http://php.net/manual/en/features.file-upload.errors.php
+function codeToMessage($code) 
+{ 
+	switch ($code) { 
+		case UPLOAD_ERR_INI_SIZE: 
+			$message = "The uploaded file exceeds the upload_max_filesize directive in php.ini"; 
+			break; 
+		case UPLOAD_ERR_FORM_SIZE: 
+			$message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
+			break; 
+		case UPLOAD_ERR_PARTIAL: 
+			$message = "The uploaded file was only partially uploaded"; 
+			break; 
+		case UPLOAD_ERR_NO_FILE: 
+			$message = "No file was uploaded"; 
+			break; 
+		case UPLOAD_ERR_NO_TMP_DIR: 
+			$message = "Missing a temporary folder"; 
+			break; 
+		case UPLOAD_ERR_CANT_WRITE: 
+			$message = "Failed to write file to disk"; 
+			break; 
+		case UPLOAD_ERR_EXTENSION: 
+			$message = "File upload stopped by extension"; 
+			break; 
+
+		default: 
+			$message = "Unknown upload error"; 
+			break; 
+	} 
+	return $message; 
+} 
+
+
+// start routing
 $uri=explode('?',$_SERVER["REQUEST_URI"]);
 switch($uri[0]){
 	case '/tUploader.min.js':
@@ -49,19 +84,33 @@ switch($uri[0]){
 		// $_FILES is from PHP
 		// ['files'] is from the tUploader's .varName Property
 		// and this code is from http://php.net/manual/en/function.move-uploaded-file.php
-		//print_r($_FILES);
 		if(isset($_FILES["files"])){
+			$errorMessage=false; // if true, the script will not return true; errors discribe themselve
 			foreach ($_FILES["files"]["error"] as $key => $error) {
 				if ($error == UPLOAD_ERR_OK) {
 					$tmp_name = $_FILES["files"]["tmp_name"][$key];
 					$name = $_FILES["files"]["name"][$key];
 					forceFilePutContents("./uploads/$name",file_get_contents($tmp_name));
+				}else if($error == UPLOAD_ERR_FORM_SIZE){
+					$errorMessage = '{error:'.$error.',message:"'.codeToMessage($error).'",maxFileSize:"'.ini_get("post_max_size").'"}';
+				}else{
+				
+					$errorMessage = '{error:'.$error.',message:"'.codeToMessage($error).'"}';
 				}
 			}
+			if( $errorMessage === false){
+				echo "true";
+			}else{
+				header("HTTP/1.0 404 some Error on upload");
+				echo $errorMessage;
+			}
 		}else{
-			echo "no file has been send, maybe the file was to big?";
+			header("HTTP/1.0 404 missing file");
+			echo  '{error:"no File uploaded",message:"please check the filesize",maxFileSize:"'.ini_get("post_max_size").'"}';
 		}
-		echo 'true';
+	break;
+	case '/maxFileSize.json':
+		echo '{maxFileSize:'.ini_get("post_max_size").'}';
 	break;
 	case '/uploads.json':
 		$dir=scandir( './uploads/' );
