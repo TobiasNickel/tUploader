@@ -32,21 +32,22 @@ This module creates a singleton object tUploader.
         
 ##events
     this lib uses the tMitter eventsystem, witch is almost similar to use like Backbone.event or emitter.js. It has the Methods .on - to register a listener, .off - to remove a listener, internally .trigger is used to provide the events for your app.
-    
-    'begin': the preProzessing is finished and the lib starts to upload
-    'progress': the progress information for a file, it also provides information for multiple uploads
-    'success':triggered when an upload has finished successfully
-    'error':triggered when an upload was stopped, i.e.: connection lost/refused
+	    
+	    'begin': the preProzessing is finished and the lib starts to upload
+	    'progress': the progress information for a file, it also provides information for multiple uploads
+	    'success':triggered when an upload has finished successfully
+	    'error':triggered when an upload was stopped, i.e.: connection lost/refused
     
 ##example
-check out the upload.php, that contains a complete WebApp, static files with your friends or your devices in a local network.
+check out the upload.php, that contains a complete WebApp, that can help you to share static files with your friends or your devices in a local networks.
         
 you can run it by the php commandline-tool, using:
     php -S 0.0.0.0:8080 upload.php
 (you have to me in the rootfolder of this repository)
-and then visit "http://localhost:8080/" in your borwser.
+and then visit "http://localhost:8080/" in your borwser. You can also copy the filed into the rootdirectory of an Apache with PHP. 
         
-        
+(be aware, that this programm should not be used in production, because it has a bit security issue with its delete route.)
+
 ##note
 This lib, works good in combination with tomcat, ruby, PHP, Phython, NodeJS and more
 
