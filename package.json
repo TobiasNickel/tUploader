@@ -4,7 +4,7 @@
   "description": "Filesharing server in node as demonstration for tUploder.js",
   "main": "uploadServer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node uploadServer.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/TobiasNickel/tUploader",
   "dependencies": {
     "file-system": "^2.2.1",
-    "formidable": "^1.0.17"
+    "formidable": "^1.0.17",
+    "express": "^4.12.3"
   }
 }
