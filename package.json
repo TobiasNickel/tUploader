@@ -1,0 +1,29 @@
+{
+  "name": "tUploader",
+  "version": "1.0.0",
+  "description": "Filesharing server in node as demonstration for tUploder.js",
+  "main": "uploadServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TobiasNickel/tUploader.git"
+  },
+  "keywords": [
+    "upload",
+    "javascript",
+    "demo",
+    "fileupload"
+  ],
+  "author": "Tobias Nickel",
+  "license": "MIT, Mach damIt was du willsT",
+  "bugs": {
+    "url": "https://github.com/TobiasNickel/tUploader/issues"
+  },
+  "homepage": "https://github.com/TobiasNickel/tUploader",
+  "dependencies": {
+    "file-system": "^2.2.1",
+    "formidable": "^1.0.17"
+  }
+}
