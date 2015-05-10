@@ -2,9 +2,8 @@
  *@author: Tobias Nickel
  *@description: The tUploader is a part of my t-Microlib series.
  * This lib is defining the tUploader as a singleton object. 
- * It hooks into the drag and drop api of the document and prevents all the browse standart behavior.
- * There for it provides a very simple way to upload handle the file upload from the client side.
- * t allows you 
+ * It hooks into the drag and drop api of the document and prevents the browsers standard behavior of catching the file.
+ * There for it provides a very simple way to handle the file upload from the client side.
  */
 tUploader =(function(document){
 // loading tStabilizer from https://github.com/TobiasNickel/tStabilizer
@@ -58,6 +57,9 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 
 	// the entry point for catching all files, no matter if from drag and drop or selecting it via filebrowser
 	function drop(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		
 		autoDroparea.style.display = 'none';
 		// copy the fileObject to a manageable Array, from a FileList
 		e.files=[];
@@ -74,14 +76,12 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 					e.files.splice(i,1);
 			}
 		}
+					
 		tUploader.preprocess(e, function(options){
 			if(!options)options = {};
 			// stop if there is no file to upload left
 			if(!e.files.length)return;
 			
-			e.stopPropagation();
-			e.preventDefault();
-						
 			e.bitrate = new tStabilizer(5);
 			tUploader.uploads.push(e);
 			options.path = options.path || tUploader.stdUploadPath;
