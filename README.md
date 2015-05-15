@@ -3,6 +3,7 @@ simple web drag and drop uploader - in hTML5 + Javascript
 
 This module creates a singleton object tUploader.
 
+
 ##properties:
         // method to lunch the fileBrowser
         openFilebrowser:function(){
