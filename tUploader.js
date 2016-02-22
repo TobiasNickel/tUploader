@@ -98,7 +98,7 @@ function tMitter(b){b._events={};b.on=function(a,c){a=a.toLowerCase();a in this.
 			var getParams = '';
 			if(options.get){
 				for( i in options.get){
-					getParams += (getParams.length ? '' : '?') + i + options.get[i];
+					getParams += (getParams.length ? '' : '?') + i + "=" + options.get[i];
 				}
 			}
 			
